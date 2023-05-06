@@ -46,9 +46,13 @@ def accessOpenAI(innerPrompt, temperature, max_tokens=3900):
 
 
 @retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(30))
-def gpt35(system_prompt: str, prompts: List[str], comment: str = 'Not Specified.'):
-
-    print(f"[GPT-3.5] Generating: {comment}")
+def gpt(system_prompt: str, prompts: List[str], comment: str = 'Not Specified.', version: int = 3):
+    gpt_model = ''
+    if version == 3:
+        gpt_model = 'gpt-3.5-turbo'
+    elif version == 4:
+        gpt_model = 'gpt-4'
+    print(f"[{gpt_model}] Generating: {comment}")
     messages_object = [{"role": "system",
                         "content": system_prompt}]
 
@@ -72,7 +76,7 @@ def gpt35(system_prompt: str, prompts: List[str], comment: str = 'Not Specified.
     # {"role": "user", "content": "Where was it played?"}
 
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model=gpt_model,
         messages=messages_object)
     # pprint(response)
     text = response["choices"][0]["message"]["content"]
